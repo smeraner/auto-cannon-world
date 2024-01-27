@@ -54,12 +54,16 @@ class AutoCannonWorld extends CANNON.World {
     attachMesh(mesh, bodyOptions = { mass: 1 }) {
         var _a;
         const body = new AutoBody(bodyOptions);
-        if (mesh.geometry instanceof THREE.SphereGeometry) {
-            const shape = new CANNON.Sphere(mesh.geometry.parameters.radius);
+        if (!mesh.geometry)
+            throw new Error(`AutoCannonWorld: ${mesh.name} has no geometry`);
+        if (mesh.geometry.constructor.name === "SphereGeometry") {
+            const geo = mesh.geometry;
+            const shape = new CANNON.Sphere(geo.parameters.radius);
             body.addShape(shape);
         }
-        else if (mesh.geometry instanceof THREE.BoxGeometry) {
-            const shape = new CANNON.Box(new CANNON.Vec3(mesh.geometry.parameters.width / 2, mesh.geometry.parameters.height / 2, mesh.geometry.parameters.depth / 2));
+        else if (mesh.geometry.constructor.name === "BoxGeometry") {
+            const geo = mesh.geometry;
+            const shape = new CANNON.Box(new CANNON.Vec3(geo.parameters.width / 2, geo.parameters.height / 2, geo.parameters.depth / 2));
             body.addShape(shape);
         }
         else {
