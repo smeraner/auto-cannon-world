@@ -3,8 +3,12 @@ import * as CANNON from 'cannon-es';
 export declare class AutoCannonWorld extends CANNON.World {
     private static oneWorld;
     static getWorld(): AutoCannonWorld;
+    isNewtonGravity: boolean;
     addNewtonGravity(): void;
+    removeNewtonGravity(): void;
+    preStepNewtonGravity(): void;
     attachMesh(mesh: THREE.Mesh, bodyOptions?: CANNON.BodyOptions): AutoBody;
+    detachMesh(mesh: THREE.Mesh): void;
     updateMeshes(): void;
     step(dt: number, timeSinceLastCalled?: number | undefined, maxSubSteps?: number | undefined): void;
 }

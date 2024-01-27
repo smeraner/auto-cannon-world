@@ -10,23 +10,35 @@ export class AutoCannonWorld extends CANNON.World {
         return AutoCannonWorld.oneWorld;
     }
 
+    public isNewtonGravity = false;
+
     addNewtonGravity() {
-        this.addEventListener('preStep', () => {
-            this.bodies.forEach(body => {
-                this.bodies.forEach(bodyB => {
-                    if (body !== bodyB) {
-                        const distance = body.position.distanceTo(bodyB.position);
-                        if (distance < 100) {
-                            const force = new CANNON.Vec3();
-                            body.position.vsub(bodyB.position, force);
-                            force.normalize();
-                            force.scale(body.mass / Math.pow(distance, 2), force);
-                            bodyB.force.vadd(force, bodyB.force);
-                        }
+        if (this.isNewtonGravity) return;
+        this.addEventListener('preStep', this.preStepNewtonGravity);
+        this.isNewtonGravity = true;
+    }
+
+    removeNewtonGravity() {
+        if (!this.isNewtonGravity) return;
+        this.removeEventListener('preStep', this.preStepNewtonGravity);
+        this.isNewtonGravity = false;
+    }
+
+    preStepNewtonGravity() {
+        this.bodies.forEach(body => {
+            this.bodies.forEach(bodyB => {
+                if (body !== bodyB) {
+                    const distance = body.position.distanceTo(bodyB.position);
+                    if (distance < 100) {
+                        const force = new CANNON.Vec3();
+                        body.position.vsub(bodyB.position, force);
+                        force.normalize();
+                        force.scale(body.mass / Math.pow(distance, 2), force);
+                        bodyB.force.vadd(force, bodyB.force);
                     }
-                })
+                }
             })
-          });
+        });
     }
 
     attachMesh(mesh: THREE.Mesh, bodyOptions: CANNON.BodyOptions = { mass: 1 }): AutoBody {
@@ -49,13 +61,19 @@ export class AutoCannonWorld extends CANNON.World {
         body.quaternion.copy(mesh.quaternion as any);
 
         //link body to mesh
-        //mesh.userData.cannonBody = body;
         body.threeMesh = mesh;
 
         //add to world
         this.addBody(body);
 
         return body;
+    }
+
+    detachMesh(mesh: THREE.Mesh) {
+        const body = this.bodies.find(body => (body as AutoBody).threeMesh === mesh);
+        if(body) {
+            this.removeBody(body);
+        }
     }
 
     updateMeshes() {

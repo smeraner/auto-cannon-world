@@ -27,6 +27,10 @@ exports.AutoBody = exports.AutoCannonWorld = void 0;
 const THREE = __importStar(require("three"));
 const CANNON = __importStar(require("cannon-es"));
 class AutoCannonWorld extends CANNON.World {
+    constructor() {
+        super(...arguments);
+        this.isNewtonGravity = false;
+    }
     static getWorld() {
         if (!AutoCannonWorld.oneWorld) {
             AutoCannonWorld.oneWorld = new AutoCannonWorld();
@@ -34,20 +38,30 @@ class AutoCannonWorld extends CANNON.World {
         return AutoCannonWorld.oneWorld;
     }
     addNewtonGravity() {
-        this.addEventListener('preStep', () => {
-            this.bodies.forEach(body => {
-                this.bodies.forEach(bodyB => {
-                    if (body !== bodyB) {
-                        const distance = body.position.distanceTo(bodyB.position);
-                        if (distance < 100) {
-                            const force = new CANNON.Vec3();
-                            body.position.vsub(bodyB.position, force);
-                            force.normalize();
-                            force.scale(body.mass / Math.pow(distance, 2), force);
-                            bodyB.force.vadd(force, bodyB.force);
-                        }
+        if (this.isNewtonGravity)
+            return;
+        this.addEventListener('preStep', this.preStepNewtonGravity);
+        this.isNewtonGravity = true;
+    }
+    removeNewtonGravity() {
+        if (!this.isNewtonGravity)
+            return;
+        this.removeEventListener('preStep', this.preStepNewtonGravity);
+        this.isNewtonGravity = false;
+    }
+    preStepNewtonGravity() {
+        this.bodies.forEach(body => {
+            this.bodies.forEach(bodyB => {
+                if (body !== bodyB) {
+                    const distance = body.position.distanceTo(bodyB.position);
+                    if (distance < 100) {
+                        const force = new CANNON.Vec3();
+                        body.position.vsub(bodyB.position, force);
+                        force.normalize();
+                        force.scale(body.mass / Math.pow(distance, 2), force);
+                        bodyB.force.vadd(force, bodyB.force);
                     }
-                });
+                }
             });
         });
     }
@@ -74,6 +88,12 @@ class AutoCannonWorld extends CANNON.World {
         body.threeMesh = mesh;
         this.addBody(body);
         return body;
+    }
+    detachMesh(mesh) {
+        const body = this.bodies.find(body => body.threeMesh === mesh);
+        if (body) {
+            this.removeBody(body);
+        }
     }
     updateMeshes() {
         this.bodies.forEach(body => {
