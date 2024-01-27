@@ -34,12 +34,28 @@ export class AutoCannonWorld extends CANNON.World {
                         const force = new CANNON.Vec3();
                         body.position.vsub(bodyB.position, force);
                         force.normalize();
-                        force.scale(body.mass / Math.pow(distance, 2), force);
+                        const forceMagnitude = this.newtonGravityAcceleration(body.mass, bodyB.mass, distance);
+                        force.scale(forceMagnitude, force);
                         bodyB.force.vadd(force, bodyB.force);
                     }
                 }
             })
         });
+    }
+   
+    /**
+     * newton gravity acceleration
+     * @param m1 mass of body 1
+     * @param m2 mass of body 2
+     * @param r distance between body 1 and body 2
+     * @returns acceleration of body 1
+     */
+    private newtonGravityAcceleration(m1:number, m2:number, r:number):number {
+        return this.newtonGravity(m1, m2, r) / m1;
+    }
+    private newtonGravity(m1:number, m2:number, r:number):number {
+        const G = 6.67408e-11;
+        return G * m1 * m2 / (r * r);
     }
 
     attachMesh(mesh: THREE.Mesh, bodyOptions: CANNON.BodyOptions = { mass: 1 }): AutoBody {

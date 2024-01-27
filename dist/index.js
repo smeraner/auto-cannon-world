@@ -30,6 +30,7 @@ class AutoCannonWorld extends CANNON.World {
     constructor() {
         super(...arguments);
         this.isNewtonGravity = false;
+        this.maxDistanceNewtonGravity = 100;
     }
     static getWorld() {
         if (!AutoCannonWorld.oneWorld) {
@@ -54,16 +55,24 @@ class AutoCannonWorld extends CANNON.World {
             this.bodies.forEach(bodyB => {
                 if (body !== bodyB) {
                     const distance = body.position.distanceTo(bodyB.position);
-                    if (distance < 100) {
+                    if (distance < this.maxDistanceNewtonGravity) {
                         const force = new CANNON.Vec3();
                         body.position.vsub(bodyB.position, force);
                         force.normalize();
-                        force.scale(body.mass / Math.pow(distance, 2), force);
+                        const forceMagnitude = this.newtonGravityAcceleration(body.mass, bodyB.mass, distance);
+                        force.scale(forceMagnitude, force);
                         bodyB.force.vadd(force, bodyB.force);
                     }
                 }
             });
         });
+    }
+    newtonGravityAcceleration(m1, m2, r) {
+        return this.newtonGravity(m1, m2, r) / m1;
+    }
+    newtonGravity(m1, m2, r) {
+        const G = 6.67408e-11;
+        return G * m1 * m2 / (r * r);
     }
     attachMesh(mesh, bodyOptions = { mass: 1 }) {
         var _a;
