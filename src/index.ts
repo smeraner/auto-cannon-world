@@ -11,6 +11,7 @@ export class AutoCannonWorld extends CANNON.World {
     }
 
     public isNewtonGravity = false;
+    public maxDistanceNewtonGravity = 100;
 
     addNewtonGravity() {
         if (this.isNewtonGravity) return;
@@ -29,7 +30,7 @@ export class AutoCannonWorld extends CANNON.World {
             this.bodies.forEach(bodyB => {
                 if (body !== bodyB) {
                     const distance = body.position.distanceTo(bodyB.position);
-                    if (distance < 100) {
+                    if (distance < this.maxDistanceNewtonGravity) {
                         const force = new CANNON.Vec3();
                         body.position.vsub(bodyB.position, force);
                         force.normalize();
