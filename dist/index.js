@@ -1,8 +1,31 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AutoBody = exports.AutoCannonWorld = void 0;
-const THREE = require("three");
-const CANNON = require("cannon-es");
+const THREE = __importStar(require("three"));
+const CANNON = __importStar(require("cannon-es"));
 class AutoCannonWorld extends CANNON.World {
     static getWorld() {
         if (!AutoCannonWorld.oneWorld) {
@@ -42,13 +65,9 @@ class AutoCannonWorld extends CANNON.World {
         else {
             throw new Error(`AutoCannonWorld: ${mesh.geometry.constructor.name} not implemented`);
         }
-        //adjust position and rotation
         body.position.copy((((_a = mesh.parent) === null || _a === void 0 ? void 0 : _a.localToWorld(mesh.position)) || mesh.position));
         body.quaternion.copy(mesh.quaternion);
-        //link body to mesh
-        //mesh.userData.cannonBody = body;
         body.threeMesh = mesh;
-        //add to world
         this.addBody(body);
         return body;
     }
