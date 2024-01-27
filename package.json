@@ -1,0 +1,35 @@
+{
+  "name": "auto-cannon-world",
+  "version": "1.0.0",
+  "description": "Helper for cannon-es",
+  "main": "dist/src/index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smeraner/auto-cannon-world.git"
+  },
+  "keywords": [
+    "cannon-es"
+  ],
+  "author": "Simon Meraner",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/smeraner/auto-cannon-world/issues"
+  },
+  "homepage": "https://github.com/smeraner/auto-cannon-world#readme",
+  "dependencies": {
+    "cannon-es": "^0.20.0",
+    "three": "^0.160.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.11",
+    "@types/three": "^0.160.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}
