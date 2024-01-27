@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Helper for cannon-es",
   "main": "dist/src/index.js",
+  "types": "src/index.ts",
   "scripts": {
     "build": "tsc",
     "test": "jest"
