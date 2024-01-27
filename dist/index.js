@@ -91,3 +91,4 @@ exports.AutoCannonWorld = AutoCannonWorld;
 class AutoBody extends CANNON.Body {
 }
 exports.AutoBody = AutoBody;
+//# sourceMappingURL=index.js.map
