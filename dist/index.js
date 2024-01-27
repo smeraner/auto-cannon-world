@@ -59,7 +59,7 @@ class AutoCannonWorld extends CANNON.World {
                         const force = new CANNON.Vec3();
                         body.position.vsub(bodyB.position, force);
                         force.normalize();
-                        const forceMagnitude = this.newtonGravityAcceleration(body.mass, bodyB.mass, distance);
+                        const forceMagnitude = this.newtonGravityAcceleration(bodyB.mass, body.mass, distance);
                         force.scale(forceMagnitude, force);
                         bodyB.force.vadd(force, bodyB.force);
                     }
